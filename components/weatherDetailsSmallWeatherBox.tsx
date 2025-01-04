@@ -58,12 +58,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   textContainer: {
+    flex: 1, 
     justifyContent: "center",
   },
   timeContainer: {
-    flex: 1,
-    width: "65%",
-    alignItems: "flex-end"
+    width: "20%",
+    alignItems: "flex-end",
+    justifyContent: "center",  // Align the time vertically centered
   },
   dayText: {
     fontWeight: "bold",
