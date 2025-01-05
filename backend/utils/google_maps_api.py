@@ -1,9 +1,8 @@
 import requests
-
-GOOGLE_MAPS_API_KEY = "AIzaSyCThrH0Ug280EZ09ScTIFuZWraVALXnDq4"
+import os
 
 def show_city(latitude, longitude):
-    url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={GOOGLE_MAPS_API_KEY}"
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={os.environ['GOOGLE_MAPS_API_KEY']}"
     
     try:
         response = requests.get(url)
