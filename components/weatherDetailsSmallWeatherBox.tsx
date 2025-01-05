@@ -1,23 +1,25 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import React from "react";
-
-const PlaceholderWeatherIcon = require('@/assets/images/sun.png');
+import weatherCodesToImages from "@/assets/weather_images";
 
 type SmallWeatherBoxProps = {
   details: string;
   temperature: number;
   time: string;
+  weather_code: number;
 };
 
 type WeatherIconProps = {
   imgSource: ImageSource;
 };
 
-export default function WeatherDetailsSmallWeatherBox({ details, temperature, time }: SmallWeatherBoxProps) {
+export default function WeatherDetailsSmallWeatherBox({ details, temperature, time, weather_code }: SmallWeatherBoxProps) {
+  const weatherIcon = weatherCodesToImages[Number(weather_code)];
+
   return (
     <View style={styles.container}>
-      <WeatherIcon imgSource={PlaceholderWeatherIcon} />
+      <WeatherIcon imgSource={weatherIcon} />
       <View style={styles.textContainer}>
         <Text>{details}</Text>
         <Text style={styles.tempText}>{temperature}°C</Text>

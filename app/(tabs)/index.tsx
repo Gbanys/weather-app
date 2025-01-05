@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useWeather } from "@/context/WeatherContext";
 import MainWeatherBox from "@/components/mainWeatherBox";
 import SmallWeatherBox from "@/components/smallWeatherBox";
+import weatherCodesToImages from "@/assets/weather_images";
 import { format } from 'date-fns';
 
 
@@ -19,12 +20,15 @@ type WeatherData = {
   current_weather_description: string;
   current_date: string;
   current_temperature: number;
+  current_weather_code: number;
+  weather_code: string[];
 };
 
 type Data = {
   temperature: string[];
   time: string[];
   description: string[];
+  weather_code: string[];
 }
 
 type UnaggregatedWeatherData = {
@@ -66,8 +70,8 @@ export default function Index() {
     fetchLocationData();
   }, []); // Empty dependency array ensures this runs once on mount.
 
-  const handleWeatherBoxClick = (temperature: string[], details: string[], time: string[]) => {
-    setWeatherData({ temperature, details, time });
+  const handleWeatherBoxClick = (temperature: string[], details: string[], time: string[], weather_code: string[]) => {
+    setWeatherData({ temperature, details, time, weather_code });
     router.push("/weather-details");
   };
 
@@ -84,10 +88,12 @@ export default function Index() {
           <TouchableOpacity key='today' onPress={() => handleWeatherBoxClick(
             unaggregatedWeatherDataByDate?.[current_date]?.['temperature'] ?? [], 
             unaggregatedWeatherDataByDate?.[current_date]?.['description'] ?? [], 
-            unaggregatedWeatherDataByDate?.[current_date]?.['time'] ?? []
+            unaggregatedWeatherDataByDate?.[current_date]?.['time'] ?? [],
+            unaggregatedWeatherDataByDate?.[current_date]?.['weather_code'] ?? []
             )}>
             <MainWeatherBox 
-              imgSource={PlaceholderWeatherImage} 
+              boxBackground={PlaceholderWeatherImage}
+              weatherIcon={weatherCodesToImages[Number(aggregatedWeatherData?.['current_weather_code'])]}
               text={aggregatedWeatherData?.['current_weather_description'] ?? ''} 
               temperature={aggregatedWeatherData?.['current_temperature'] ?? 0}
             />
@@ -104,10 +110,11 @@ export default function Index() {
               <TouchableOpacity key={`${date}-${index}`} onPress={() => handleWeatherBoxClick(
                 unaggregatedWeatherDataByDate?.[date]?.['temperature'] ?? [], 
                 unaggregatedWeatherDataByDate?.[date]?.['description'] ?? [], 
-                unaggregatedWeatherDataByDate?.[date]?.['time'] ?? []
+                unaggregatedWeatherDataByDate?.[date]?.['time'] ?? [],
+                unaggregatedWeatherDataByDate?.[date]?.['weather_code'] ?? []
                 )}>
                 <SmallWeatherBox
-                  imgSource={PlaceholderWeatherImage}
+                  imgSource={weatherCodesToImages[Number(aggregatedWeatherData?.['weather_code'][index])]}
                   text={aggregatedWeatherData['description'][index]}
                   temperature={aggregatedWeatherData['average_temperature'][index]}
                   date={formatDate(date)}

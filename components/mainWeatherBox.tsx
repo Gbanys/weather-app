@@ -2,10 +2,9 @@ import { StyleSheet, Text, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import React from "react";
 
-const PlaceholderWeatherIcon = require('@/assets/images/sun.png');
-
 type mainWeatherBoxProps = {
-  imgSource: ImageSource;
+  boxBackground: ImageSource;
+  weatherIcon: ImageSource;
   text: string;
   temperature: number;
 };
@@ -14,15 +13,15 @@ type weatherIconProps = {
   imgSource: ImageSource;
 }
 
-export default function MainWeatherBox({ imgSource, text, temperature }: mainWeatherBoxProps) {
+export default function MainWeatherBox({ boxBackground, weatherIcon, text, temperature }: mainWeatherBoxProps) {
   const temperatureString = `${temperature}°C`;
 
   return (
     <View style={styles.container}>
-      <Image source={imgSource} style={styles.image} />
+      <Image source={boxBackground} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.text}>{text}</Text>
-        <WeatherIcon imgSource={PlaceholderWeatherIcon} />
+        <WeatherIcon imgSource={weatherIcon} />
         <Text style={styles.temperature}>{temperatureString}</Text>
       </View>
     </View>
@@ -40,14 +39,14 @@ function WeatherIcon({ imgSource }: weatherIconProps) {
 const styles = StyleSheet.create({
   container: {
     width: 300,
-    height: 240,
+    height: 300,
     borderRadius: 18,
     marginTop: 20,
     overflow: "hidden", // Ensures the text doesn't overflow the rounded corners
   },
   topWeatherIcon: {
-    width: 75,
-    height: 75,
+    width: 100,
+    height: 100,
     margin: 20
   },
   image: {

@@ -2,8 +2,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import React from "react";
 
-const PlaceholderWeatherIcon = require('@/assets/images/sun.png');
-
 type SmallWeatherBoxProps = {
   imgSource: ImageSource;
   text: string;
@@ -18,7 +16,7 @@ type WeatherIconProps = {
 export default function SmallWeatherBox({ imgSource, text, temperature, date}: SmallWeatherBoxProps) {
   return (
     <View style={styles.container}>
-      <WeatherIcon imgSource={PlaceholderWeatherIcon} />
+      <WeatherIcon imgSource={imgSource} />
       <View style={styles.textContainer}>
         <Text style={styles.dayText}>{date}</Text>
         <Text>{text}</Text>

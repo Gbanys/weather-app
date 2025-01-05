@@ -1,23 +1,8 @@
-from typing import Any
+from typing import Any, Hashable
 import requests
 import pandas as pd
-from weather_codes import weather_codes
+from weather_codes import weather_codes, weather_codes_to_images
 from datetime import datetime
-
-
-def add_ordinal_suffix(day: int) -> str:
-    """Return the day with its ordinal suffix."""
-    if 10 <= day % 100 <= 20:  # Special case for teens
-        suffix = "th"
-    else:
-        suffix = {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
-    return f"{day}{suffix}"
-
-
-def format_date_without_year(date_str: str) -> str:
-    date_object = datetime.strptime(date_str, "%Y-%m-%d")
-    day_with_suffix = add_ordinal_suffix(date_object.day)
-    return f"{date_object.strftime('%A')} {day_with_suffix} of {date_object.strftime('%B')}"
 
 
 def get_weather_data_by_latitude_and_longitude(latitude: float, longitude: float) -> pd.DataFrame:
@@ -27,10 +12,12 @@ def get_weather_data_by_latitude_and_longitude(latitude: float, longitude: float
     datetime = weather_data['hourly']['time']
     temperatures = weather_data['hourly']['temperature_2m']
     weather_descriptions = [weather_codes[code] for code in weather_data['hourly']['weather_code']]
+    weather_codes_from_api = [code for code in weather_data['hourly']['weather_code']]
 
     current_temperature = weather_data['current']['temperature_2m']
     current_date = weather_data['current']['time'].split("T")[0]
     current_weather_description = weather_codes[weather_data['current']['weather_code']]
+    current_weather_code = weather_data['current']['weather_code']
 
     weather_dataframe = pd.DataFrame(
         {"datetime" : datetime, 
@@ -38,7 +25,9 @@ def get_weather_data_by_latitude_and_longitude(latitude: float, longitude: float
          "description" : weather_descriptions,
          "current_temperature" : current_temperature,
          "current_date" : current_date,
-         "current_weather_description" : current_weather_description
+         "current_weather_description" : current_weather_description,
+         "current_weather_code" : current_weather_code,
+         "weather_code" : weather_codes_from_api
          })
     return weather_dataframe
 
@@ -54,11 +43,13 @@ def get_aggregated_weather_data(latitude: float, longitude: float) -> dict[str, 
         "average_temperature" : weather_dataframe.groupby(['date'])['temperature'].mean().round(1).tolist(),
         "description" : weather_dataframe.groupby(['date'])['description'].apply(lambda row: row.mode().iloc[0]).tolist(),
         "current_weather_description" : weather_dataframe.loc[0, 'current_weather_description'],
-        "current_date" : weather_dataframe.loc[0, 'current_date'],
-        "current_temperature" : weather_dataframe.loc[0, 'current_temperature']
+        "current_date" : str(weather_dataframe.loc[0, 'current_date']),
+        "current_temperature" : float(weather_dataframe.loc[0, 'current_temperature']),
+        "current_weather_code" : int(weather_dataframe.loc[0, 'current_weather_code']),
+        "weather_code" : weather_dataframe.groupby(['date'])['weather_code'].apply(lambda row: row.mode().iloc[0]).astype(int).tolist()
     }   
 
-def get_weather_statistics_by_date(latitude: float, longitude: float):
+def get_weather_statistics_by_date(latitude: float, longitude: float) -> dict[Hashable, Any]:
     weather_dataframe = get_weather_data_by_latitude_and_longitude(latitude, longitude)
     weather_dataframe['date'] = weather_dataframe.apply(lambda row: row['datetime'].split('T')[0], axis=1)
     weather_dataframe['time'] = weather_dataframe.apply(lambda row: row['datetime'].split('T')[1], axis=1)
@@ -67,6 +58,7 @@ def get_weather_statistics_by_date(latitude: float, longitude: float):
         'temperature': list,
         'time': list,
         'description' : list,
+        'weather_code' : list
     }).reset_index()
 
     result = grouped_dataframe.set_index('date').to_dict(orient='index')

@@ -5,7 +5,7 @@ import { useWeather } from "@/context/WeatherContext";
 
 export default function WeatherDetailsScreen() {
   const { weatherData } = useWeather();
-  const { temperature, details, time } = weatherData;
+  const { temperature, details, time, weather_code } = weatherData;
   const ContainerBackgroundImage = require('@/assets/images/weather-details.jpg');
 
   return (
@@ -17,6 +17,7 @@ export default function WeatherDetailsScreen() {
               temperature={temp}
               details={details[index]}
               time={time[index]}
+              weather_code={weather_code[index]}
             />
           ))}
       </ImageBackground>
