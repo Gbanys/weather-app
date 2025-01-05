@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import React from "react";
+import { useLocation } from "@/context/LocationContext";
 
 type mainWeatherBoxProps = {
   boxBackground: ImageSource;
@@ -15,11 +16,14 @@ type weatherIconProps = {
 
 export default function MainWeatherBox({ boxBackground, weatherIcon, text, temperature }: mainWeatherBoxProps) {
   const temperatureString = `${temperature}°C`;
+  const { locationData } = useLocation();
+  const city = locationData?.city ?? "Unknown";
 
   return (
     <View style={styles.container}>
       <Image source={boxBackground} style={styles.image} />
       <View style={styles.textContainer}>
+        <Text style={styles.text}>{city}</Text>
         <Text style={styles.text}>{text}</Text>
         <WeatherIcon imgSource={weatherIcon} />
         <Text style={styles.temperature}>{temperatureString}</Text>
@@ -39,7 +43,7 @@ function WeatherIcon({ imgSource }: weatherIconProps) {
 const styles = StyleSheet.create({
   container: {
     width: 300,
-    height: 300,
+    height: 350,
     borderRadius: 18,
     marginTop: 20,
     overflow: "hidden", // Ensures the text doesn't overflow the rounded corners
@@ -66,6 +70,7 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.75)", // Optional: Add a shadow for better readability
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 4,
+    margin: 5
   },
   temperature: {
     color: "white",

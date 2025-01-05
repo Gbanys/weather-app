@@ -6,7 +6,7 @@ import MainWeatherBox from "@/components/mainWeatherBox";
 import SmallWeatherBox from "@/components/smallWeatherBox";
 import weatherCodesToImages from "@/assets/weather_images";
 import { format } from 'date-fns';
-
+import { useLocation } from "@/context/LocationContext";
 
 const PlaceholderWeatherImage = require('@/assets/images/sunny.jpg');
 const ContainerBackgroundImage = require('@/assets/images/bubble_background.jpg');
@@ -42,11 +42,15 @@ export default function Index() {
   const [aggregatedWeatherData, setAggregatedWeatherData] = useState<WeatherData | null>(null);
   const [unaggregatedWeatherDataByDate, setUnaggregatedWeatherDataByDate] = useState<UnaggregatedWeatherData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { locationData } = useLocation();
 
   useEffect(() => {
     const fetchLocationData = async () => {
-      const latitude = 50.9;
-      const longitude = -1.4;
+      if (!locationData) {
+        console.error("Location data is null");
+        return;
+      }
+      const { latitude, longitude } = locationData;
 
       try {
         const first_response = await fetch(`http://127.0.0.1:8000/get_aggregated_weather_data?latitude=${latitude}&longitude=${longitude}`);
@@ -68,7 +72,7 @@ export default function Index() {
     };
 
     fetchLocationData();
-  }, []); // Empty dependency array ensures this runs once on mount.
+  }, [locationData]); // Empty dependency array ensures this runs once on mount.
 
   const handleWeatherBoxClick = (temperature: string[], details: string[], time: string[], weather_code: string[]) => {
     setWeatherData({ temperature, details, time, weather_code });
