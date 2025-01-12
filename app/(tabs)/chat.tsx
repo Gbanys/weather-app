@@ -31,7 +31,7 @@ export default function ChatScreen() {
         console.log("Sending payload:", payload);
         axios({
             method: 'post',
-            baseURL: "http://localhost:8000",
+            baseURL: "http://192.168.0.33:8000",
             url: '/agent_answer',
             data: JSON.stringify(payload),
             headers: {

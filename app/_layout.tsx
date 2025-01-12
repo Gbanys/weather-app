@@ -6,6 +6,7 @@ import { ConversationProvider } from "@/context/ConversationContext";
 import { useLocation } from "@/context/LocationContext";
 import { View, Text } from "react-native";
 import axios from "axios";
+import * as Location from 'expo-location';
 
 export default function RootLayout() {
   return (
@@ -25,12 +26,26 @@ const LocationWrapper = () => {
   const [locationLoaded, setLocationLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchLocationData = async (position: GeolocationPosition) => {
+    const fetchLocationData = async () => {
       try {
+        // Request location permissions
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.error("Location permission denied");
+          setLocationLoaded(true);
+          return;
+        }
+
+        // Get current location
+        const position = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High,
+        });
+
         const { latitude, longitude } = position.coords;
 
+        // Fetch city data using the latitude and longitude
         const response = await axios.get(
-          `http://127.0.0.1:8000/city?latitude=${latitude}&longitude=${longitude}`
+          `http://192.168.0.33:8000/city?latitude=${latitude}&longitude=${longitude}`
         );
 
         const city = response.data;
@@ -38,21 +53,13 @@ const LocationWrapper = () => {
         setLocationData({ latitude, longitude, city });
         console.log(`Latitude: ${latitude}, Longitude: ${longitude}, City: ${city}`);
       } catch (error) {
-        console.error("Error fetching city data:", error);
+        console.error("Error fetching location or city data:", error);
       } finally {
         setLocationLoaded(true);
       }
     };
 
-    // Get the current location
-    navigator.geolocation.getCurrentPosition(
-      (position) => fetchLocationData(position),
-      (error) => {
-        console.error("Error getting location:", error.message);
-        setLocationLoaded(true);
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
-    );
+    fetchLocationData(); // Call the function to fetch location data
   }, [setLocationData]);
 
   if (!locationLoaded) {
@@ -65,7 +72,6 @@ const LocationWrapper = () => {
     </Stack>
   );
 };
-
 
 const LoadingScreen = () => {
   return (

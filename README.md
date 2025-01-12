@@ -9,8 +9,25 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
    npm install
    ```
+   
+2. Install poetry dependencies in the backend folder. This project was setup using python 3.12,
+so make sure that you have python 3.12^ installed (preferably using pyenv)
 
-2. Start the app
+   ```
+   poetry install --no-root
+   ```
+
+3. Create a .env file with GOOGLE_MAPS_API_KEY and OPENAI_API_KEY. You will need your google cloud account
+and OpenAI account for this.
+
+
+4. Start the backend server
+
+   ```
+   fastapi dev main.py
+   ```
+
+5. Start the mobile app
 
    ```bash
     npx expo start

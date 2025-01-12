@@ -17,7 +17,7 @@ export default function SearchScreen() {
     }
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/suggestions?query=${query}`);
+      const response = await axios.get(`http://192.168.0.33:8000/suggestions?query=${query}`);
       setSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
@@ -35,7 +35,7 @@ export default function SearchScreen() {
       return;
     }
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/coordinates?city=${suggestion}`);
+      const response = await axios.get(`http://192.168.0.33:8000/coordinates?city=${suggestion}`);
       setSearchQuery(suggestion);
       setSuggestions([]);
       setLocationData({

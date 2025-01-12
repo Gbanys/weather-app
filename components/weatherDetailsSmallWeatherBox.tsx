@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Image, type ImageSource } from "expo-image";
 import React from "react";
-import weatherCodesToImages from "@/assets/weather_images";
+import weatherCodesToImagesDay from "@/assets/weather_images_day";
+import weatherCodesToImagesNight from "@/assets/weather_images_night";
 
 type SmallWeatherBoxProps = {
   details: string;
@@ -15,7 +16,12 @@ type WeatherIconProps = {
 };
 
 export default function WeatherDetailsSmallWeatherBox({ details, temperature, time, weather_code }: SmallWeatherBoxProps) {
-  const weatherIcon = weatherCodesToImages[Number(weather_code)];
+  const hour = parseInt(time.split(':')[0], 10); // Get the hour (HH) from time
+
+  const weatherIcon =
+    hour >= 7 && hour < 18
+      ? weatherCodesToImagesDay[Number(weather_code)] // Daytime icon
+      : weatherCodesToImagesNight[Number(weather_code)]; // Nighttime icon
 
   return (
     <View style={styles.container}>
@@ -64,14 +70,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   timeContainer: {
-    width: "20%",
+    width: "30%",
     alignItems: "flex-end",
     justifyContent: "center",  // Align the time vertically centered
   },
   dayText: {
     fontWeight: "bold",
     color: "#333",
-    fontSize: 25
+    fontSize: 20
   },
   tempText: {
     fontSize: 14,

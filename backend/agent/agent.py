@@ -4,7 +4,10 @@ from langchain_openai.chat_models import ChatOpenAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from agent.tools import get_weather_data_from_location
 from langchain_core.messages import AIMessage, HumanMessage
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 model = ChatOpenAI(model="gpt-4")
 prompt = ChatPromptTemplate.from_messages(
